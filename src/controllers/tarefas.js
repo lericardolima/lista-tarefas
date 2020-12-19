@@ -65,7 +65,25 @@ exports.get = (req, res) => {
 }
 
 exports.update = (req, res) => {
+    const { id } = req.params;
+    const tarefa = req.body;
+    Tarefas.findByIdAndUpdate(id, tarefa, (error, result) => {
+        if (error) {
+            return montarErrorResponsePadrao(res, error);
+        }
 
+        if (!result) {
+            return montarResponse(res, 404, {
+                erro: 'Tarefa não encontrada',
+                mensagem: `Não foi encontrada tarefa com o id ${id}`
+            });
+        }
+
+        return montarResponse(res, 200, {
+            mensagem: 'Tarefa atualizada!',
+            tarefa
+        });
+    })
 }
 
 exports.delete = (req, res) => {
