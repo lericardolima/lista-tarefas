@@ -39,7 +39,27 @@ exports.list = (req, res) => {
 }
 
 exports.get = (req, res) => {
+    const { id } = req.params;
+    Tarefas.findById(id, (error, tarefa) => {
+        if (error) {
+            return res.status(400).send({
+                erro: error.name,
+                mensagem: error.message
+            })
+        }
 
+        if (!tarefa) {
+            return res.status(404).send({
+                erro: 'Tarefa não encontrada',
+                mensagem: `Não foi encontrada tarefa com o id ${id}`
+            })
+        }
+
+        return res.status(200).send({
+            mensagem: 'Tarefa encontrada!',
+            tarefa
+        });
+    })
 }
 
 exports.update = (req, res) => {
