@@ -1,20 +1,28 @@
 const Tarefas = require('../models/tarefas');
 
+const montarResponse = (response, statusCode, responseBody) => {
+    return response.status(statusCode).send(responseBody);
+}
+
+const montarErrorResponsePadrao = (response, error) => {
+    return montarResponse(response, 400, {
+        erro: error.name,
+        mensagem: error.message
+    });
+}
+
 exports.create = (req, res) => {
     
     new Tarefas(req.body)
         .save((error, tarefa) => {
             if (error) {
-                return res.status(400).send({
-                    erro: error.name,
-                    mensagem: error.message
-                })
+                return montarErrorResponsePadrao(res, error);
             }
 
-            return res.status(201).send({
+            return montarResponse(res, 201, {
                 mensagem: 'Tarefa criada com sucesso!',
                 tarefa
-            });
+            })
         })
 
 }
@@ -23,13 +31,10 @@ exports.list = (req, res) => {
 
     Tarefas.find((error, tarefas) => {
             if (error) {
-                return res.status(400).send({
-                    erro: error.name,
-                    mensagem: error.message
-                })
+                return montarErrorResponsePadrao(res, error);
             }
 
-            return res.status(200).send({
+            return montarResponse(res, 200, {
                 mensagem: 'Lista de tarefas carregadas!',
                 quantidade: tarefas.length,
                 tarefas
@@ -42,20 +47,17 @@ exports.get = (req, res) => {
     const { id } = req.params;
     Tarefas.findById(id, (error, tarefa) => {
         if (error) {
-            return res.status(400).send({
-                erro: error.name,
-                mensagem: error.message
-            })
+            return montarErrorResponsePadrao(res, error);
         }
 
         if (!tarefa) {
-            return res.status(404).send({
+            return montarResponse(res, 404, {
                 erro: 'Tarefa não encontrada',
                 mensagem: `Não foi encontrada tarefa com o id ${id}`
-            })
+            });
         }
 
-        return res.status(200).send({
+        return montarResponse(res, 200, {
             mensagem: 'Tarefa encontrada!',
             tarefa
         });
