@@ -87,5 +87,19 @@ exports.update = (req, res) => {
 }
 
 exports.delete = (req, res) => {
+    const { id } = req.params;
+    Tarefas.findByIdAndDelete(id, (error, tarefa) => {
+        if (error) {
+            return montarErrorResponsePadrao(res, error);
+        }
 
+        if (!tarefa) {
+            return montarResponse(res, 404, {
+                erro: 'Tarefa não encontrada',
+                mensagem: `Não foi encontrada tarefa com o id ${id}`
+            });
+        }
+
+        return montarResponse(res, 204);
+    })
 }
