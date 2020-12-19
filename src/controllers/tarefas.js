@@ -21,6 +21,21 @@ exports.create = (req, res) => {
 
 exports.list = (req, res) => {
 
+    Tarefas.find((error, tarefas) => {
+            if (error) {
+                return res.status(400).send({
+                    erro: error.name,
+                    mensagem: error.message
+                })
+            }
+
+            return res.status(200).send({
+                mensagem: 'Lista de tarefas carregadas!',
+                quantidade: tarefas.length,
+                tarefas
+            });
+        })
+
 }
 
 exports.get = (req, res) => {
